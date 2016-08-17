@@ -76,59 +76,36 @@
     (function($) {
         $.fn.move = function() {
             return $(this).each(function() {
-                var _self = this;
-                _self._isMove = false;
                 var oThis = $(this),
+                        _isMove = false,
                         _x = 0,
                         _y = 0,
-                        _lastX = 0,
-                        _lastY = 0,
-                        _width = oThis.width(),
-                        _height = oThis.height(),
-                        _win = $(window),
-                        _doc = $(document),
-                        drag = {
-                            winSize : function() {
-                                _winWidth = _win.width();
-                                _winhei = _win.height();
-                            },
-                            down : function(e,obj) {
-                                obj._isMove = true;
-                                _x = e.clientX - parseInt(obj.css("left"));
-                                _y = e.clientY - parseInt(obj.css("top"));
-                                _doc.on('mousemove',function (e) {
-                                    drag.move(e,obj)
-                                });
-                                _doc.on('mouseup', function () {
-                                    drag.up(obj)
-                                });
-                            },
-                            move : function(e,obj) {
-                                if( obj._isMove ) {
-                                    _lastX = e.clientX - _x ;
-                                    _lastY = e.clientY - _y ;
-                                    _lastX = Math.max(0, Math.min(obj.parent().width() - _width, _lastX));
-                                    _lastY = Math.max(0, Math.min(obj.parent().height() - _height, _lastY));
-                                    obj.css({"left":parseInt(_lastX), "top":parseInt(_lastY)});
-                                }
-                            },
-                            up : function(obj) {
-                                obj._isMove = false;
-                            }
-                        };
-                (function (){
-                    oThis.on('mousedown' , function (e){
-                        drag.down(e,$(this));
-                    });
-                })()
+                        _width = $(this).width(),
+                        _height = $(this).height(),
+                        _winWidth = oThis.parent().width(),
+                        _winHeight = oThis.parent().height();
+                $(this).mousedown(function(e) {
+                    console.log(_winHeight);
+                    _isMove = true;
+                    _x = e.clientX - parseInt($(this).css("left"));
+                    _y = e.clientY - parseInt($(this).css("top"));
+                });
+                $(document).mousemove(function(e) {
+                    if( _isMove ) {
+                        var x = e.clientX - _x ;
+                        var y = e.clientY - _y ;
+                        x = Math.max(0, Math.min(_winWidth - _width, x));
+                        y = Math.max(0, Math.min(_winHeight - _height, y));
+                        oThis.css({"left":parseInt(x), "top":parseInt(y)});
+                    }
+                }).mouseup(function() {
+                    _isMove = false;
+                });
             });
         }
     })(jQuery);
 
     $('.exam').move();
-
-
-
 </script>
 </body>
 </html>
